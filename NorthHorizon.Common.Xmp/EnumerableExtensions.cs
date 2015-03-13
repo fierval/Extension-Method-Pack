@@ -284,7 +284,7 @@ namespace NorthHorizon.Common.Xmp
         /// <param name="collection">The target collection.</param>
         /// <param name="function">The function used to produce values.</param>
         /// <returns>The argument that produces the highest value.</returns>
-        public static T ArgMax<T, TValue>(this IEnumerable<T> collection, Func<T, TValue> function)
+        public static int ArgMax<T, TValue>(this IEnumerable<T> collection, Func<T, TValue> function)
             where TValue : IComparable<TValue>
         {
             return ArgComp(collection, function, GreaterThan);
@@ -304,7 +304,7 @@ namespace NorthHorizon.Common.Xmp
         /// <param name="collection">The target collection.</param>
         /// <param name="function">The function used to produce values.</param>
         /// <returns>The argument that produces the least value.</returns>
-        public static T ArgMin<T, TValue>(this IEnumerable<T> collection, Func<T, TValue> function)
+        public static int ArgMin<T, TValue>(this IEnumerable<T> collection, Func<T, TValue> function)
             where TValue : IComparable<TValue>
         {
             return ArgComp(collection, function, LessThan);
@@ -315,7 +315,7 @@ namespace NorthHorizon.Common.Xmp
             return first.CompareTo(second) < 0;
         }
 
-        private static T ArgComp<T, TValue>(IEnumerable<T> collection, Func<T, TValue> function, Func<TValue, TValue, bool> accept)
+        private static int ArgComp<T, TValue>(IEnumerable<T> collection, Func<T, TValue> function, Func<TValue, TValue, bool> accept)
             where TValue : IComparable<TValue>
         {
             if (collection == null)
@@ -324,19 +324,19 @@ namespace NorthHorizon.Common.Xmp
             if (function == null)
                 throw new ArgumentNullException("function");
 
-            var isSet = false;
-            var maxArg = default(T);
+            var maxArg = 0;
             var maxValue = default(TValue);
 
+            int i = 0;
             foreach (var item in collection)
             {
                 var value = function(item);
-                if (!isSet || accept(value, maxValue))
+                if (accept(value, maxValue))
                 {
-                    maxArg = item;
+                    maxArg = i;
                     maxValue = value;
-                    isSet = true;
                 }
+                i++;
             }
 
             return maxArg;
